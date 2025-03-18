@@ -9,19 +9,20 @@ import Friends from "./pages/Friends";
 import Modal from "./components/Modal";
 import { LoginPage } from "./auth/LoginPage";
 import { RegisterPage } from "./auth/RegisterPage";
+import { ProtectedRoute } from "./ProtectedRoute";
 import { nanoid } from "nanoid";
 
 interface Hobby {
-    id: string;
-    title: string;
-    date: string;
-    hobbyType: string;
-    image: string;
-    rating: number;
+	id: string;
+	title: string;
+	date: string;
+	hobbyType: string;
+	image: string;
+	rating: number;
 }
 
 interface AppProps {
-    hobbies: Hobby[];
+	hobbies: Hobby[];
 }
 
 const App: React.FC<AppProps> = ({ hobbies }) => {
@@ -31,7 +32,13 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 
 	const openModal = () => setIsModalOpen(true);
 
-	function addHobby(title: string, date: string, hobbyType: string, image: string, rating: number) {
+	function addHobby(
+		title: string,
+		date: string,
+		hobbyType: string,
+		image: string,
+		rating: number
+	) {
 		const newHobby: Hobby = {
 			id: nanoid(),
 			title,
@@ -53,13 +60,20 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 						<Route
 							path="/"
 							element={
-								<>
+								<ProtectedRoute authToken={authToken}>
 									<Currently hobbies={hobbiesList} />
 									<Profile />
-								</>
+								</ProtectedRoute>
 							}
 						/>
-						<Route path="/friends" element={<Friends />} />
+						<Route
+							path="/friends"
+							element={
+								<ProtectedRoute authToken={authToken}>
+									<Friends />{" "}
+								</ProtectedRoute>
+							}
+						/>
 						<Route path="/register" element={<RegisterPage />} />
 						<Route
 							path="/login"
