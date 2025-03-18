@@ -41,7 +41,10 @@ export function verifyAuthToken(
 	}
 }
 
-export function generateAuthToken(username: string, userId: string): Promise<string> {
+export function generateAuthToken(
+	username: string,
+	userId: string
+): Promise<string> {
 	return new Promise<string>((resolve, reject) => {
 		jwt.sign(
 			{ username: username, userId: userId },
@@ -76,6 +79,7 @@ export function registerAuthRoutes(
 			}
 
 			try {
+				// Register the user
 				const success = await credentialsProvider.registerUser(
 					username,
 					password
@@ -90,9 +94,33 @@ export function registerAuthRoutes(
 					return;
 				}
 
-				// case 3: user registered successfully
+				// case 3: user registered successfully, create profile
+				const user = await credentialsProvider.getUserByUsername(
+					username
+				);
+				const defaultAvatar = "/uploads/def-no-pfp.png";
+
+				if (!user) {
+					res.status(500).json({ error: "User not found after registration" });
+					return;
+				}
+
+				// Create a default profile for the new user
+				const profile = {
+					userId: user._id.toString(),
+					username: user.username,
+					bio: "", // Default bio or empty
+					avatar: defaultAvatar, // Default avatar URL or empty
+				};
+
+				// Insert the profile into the profiles collection
+				const profilesCollection = mongoClient
+					.db()
+					.collection(process.env.PROFILES_COLLECTION_NAME!);
+				await profilesCollection.insertOne(profile);
+
 				res.status(201).json({
-					message: "User registered successfully.",
+					message: "User and profile registered successfully.",
 				});
 			} catch (error) {
 				console.error("Error in registerUser: ", error);
@@ -123,7 +151,7 @@ export function registerAuthRoutes(
 				if (!user) {
 					res.status(401).json({
 						error: "Incorrect username or password",
-					});	
+					});
 					return;
 				}
 
@@ -140,7 +168,10 @@ export function registerAuthRoutes(
 				}
 
 				// token creation
-				const token = await generateAuthToken(username, user._id.toString());
+				const token = await generateAuthToken(
+					username,
+					user._id.toString()
+				);
 
 				res.status(200).json({ token, userId: user._id.toString() }); // success
 			} catch (error) {

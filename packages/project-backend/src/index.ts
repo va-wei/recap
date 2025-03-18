@@ -4,6 +4,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { registerHobbyRoutes } from "./routes/hobbies";
 import { registerAuthRoutes, verifyAuthToken } from "./routes/auth";
+import { registerProfileRoutes } from "./routes/profiles";
 import cors from "cors";
 
 dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
@@ -35,6 +36,7 @@ async function setUpServer() {
 
         registerAuthRoutes(app, mongoClient);
         registerHobbyRoutes(app, mongoClient);
+        registerProfileRoutes(app, mongoClient);
 
         app.get("/hello", (req: Request, res: Response) => {
             res.send("Hello, World");
@@ -47,6 +49,8 @@ async function setUpServer() {
         app.listen(PORT, () => {
             console.log(`Server running at http://localhost:${PORT}`);
         });
+
+        app.use("/uploads", express.static("uploads"));
 
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);

@@ -29,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null); // Store file directly
-	const [rating, setRating] = useState<number>(1);
+	const [rating, setRating] = useState<number>(0);
 	const [hobbyType, setHobbyType] = useState<string>("");
 	const [title, setTitle] = useState<string>("");
 	const [date, setDate] = useState<string>("");

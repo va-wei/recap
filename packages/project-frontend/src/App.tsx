@@ -83,7 +83,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 							element={
 								<ProtectedRoute authToken={authToken}>
 									<Currently />
-									<Profile />
+									<Profile authToken={authToken || ""} />
 								</ProtectedRoute>
 							}
 						/>

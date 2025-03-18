@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHobbyFetching } from "../useHobbyFetching";
+import { useHobbyFetching } from "../hooks/useHobbyFetching";
 import Spinner from "./Spinner";
 
 interface Hobby {
