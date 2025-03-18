@@ -28,7 +28,7 @@ interface AppProps {
 const App: React.FC<AppProps> = ({ hobbies }) => {
 	const [hobbiesList, setHobbiesList] = useState<Hobby[]>(hobbies);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-	const [authToken, setAuthToken] = useState(null);
+	const [authToken, setAuthToken] = useState<string | null>(null);
 
 	const openModal = () => setIsModalOpen(true);
 

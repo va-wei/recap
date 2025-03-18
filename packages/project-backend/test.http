@@ -1,0 +1,66 @@
+# ### This is a comment
+# POST http://localhost:3000/auth/register
+# Content-Type: application/json
+
+# { "username": "newuser", "password": "password" }
+
+# ### A second example, each request should be delimited by a triple hash
+# GET http://localhost:3000/api/images
+
+### 🟢 Test 1: Register a valid user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "newuser",
+    "password": "password"
+}
+
+### 🔑 Test 2: Login with correct credentials
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "newuser",
+    "password": "password"
+}
+
+### 🔴 Test 3: Login with incorrect password
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "newuser",
+    "password": "wrongpassword"
+}
+
+### 🔴 Test 4: Register with missing fields (expect 400)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "incompleteUser"
+}
+
+### 🔴 Test 5: Register an existing user (expect 400)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "newuser",
+    "password": "password"
+}
+
+### 🔴 Test 6: Login with non-existing user
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "username": "unknownuser",
+    "password": "password"
+}
+
+### get with newuser credentials
+
+GET http://localhost:3000/api/images
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIiLCJpYXQiOjE3NDE2MjUwMDYsImV4cCI6MTc0MTcxMTQwNn0.2GISsGWm6iAYLYRT2TXN1dgjWVa9ytpUoQRZdso8GPE
