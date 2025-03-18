@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@1&family=Schoolbell&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Text&family=Schoolbell&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@100..900&display=swap');
+
+:root {
+    /* colors */
+    --color-body-background: #ffffff;
+    --color-section-background: #E0E1DD;
+    --color-header-primary: #778DA9; /* header */ 
+    --color-header-secondary: #415A77; /* subheadings */
+    --color-text-secondary: #1B263B;
+    --color-text-primary: #0D1B2A; /* darkest color for body text */ 
+    --color-text-shadow: #ccc; /* light gray coloring for shadow */
+
+    /* fonts */
+    --font-heading: 'Schoolbell', cursive, sans-serif;
+    --font-subheading: 'DM Serif Text', serif; 
+    --font-body-text: 'Roboto Flex', sans-serif;
+
+    /* sizes */
+    --size-subheading: 1.2em;
+    --size-plain-text: .8em;
+    --spacing-size-smallest: .2em;
+    --spacing-size-small: 0.5em;
+    --spacing-size-medium: 1em;
+    --spacing-size-medium-big: 1.5em;
+    --spacing-size-big: 2em;    
+    --header-height: 8vh;
+
+    /* dark mode */
+    body.dark-mode{
+        --color-body-background: #0D1B2A;
+        --color-section-background: #25374b;
+        --color-header-primary: #415A77; /* header */ 
+        --color-header-secondary: #a8bcd6; /* subheadings */
+        --color-text-secondary: #ffffff;
+        --color-text-primary: #E0E1DD; /* darkest color for body text */ 
+        --color-text-shadow: #ccc; /* light gray coloring for shadow */
+        --color-slider: #3d6fa9;
+    }
+
+    body.dark-mode input {
+        color-scheme: dark;
+    }
+}
