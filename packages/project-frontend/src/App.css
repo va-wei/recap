@@ -74,7 +74,7 @@ body {
 	border-radius: 10px;
 	background-color: var(--color-section-background);
 	max-height: 63vh;
-	overflow: hidden;
+	overflow-y: auto;
 }
 
 .currently-section ul {
@@ -100,6 +100,12 @@ body {
 	border-radius: 10px;
 	font-size: clamp(0.4rem, calc(0.4rem + 1vw), 0.85rem);
 	overflow: hidden;
+}
+
+.category-title {
+	font-family: var(--font-subheading);
+	font-size: var(--size-subheading);
+	padding-left: var(--spacing-size-smallest);
 }
 
 .hobby-info {
@@ -517,6 +523,8 @@ textarea.profile-input {
 
 @media (min-width: 768px) {
 	.currently-section {
+		display: flex;
+		flex-direction: column;
 		overflow: visible;
 		max-height: unset;
 	}
