@@ -5,24 +5,29 @@ import { sendPostRequest } from "../sendPostRequest";
 
 interface LoginPageProps {
 	setAuthToken: (token: string) => void;
+	setUserId: (userId: string) => void;
 }
 
-export function LoginPage({ setAuthToken }: LoginPageProps) {
+export function LoginPage({ setAuthToken, setUserId }: LoginPageProps) {
 	const [loginError, setLoginError] = useState<string | null>(null);
 	const navigate = useNavigate();
 
 	const handleLoginSubmit = async (username: string, password: string): Promise<void> => {
 		try {
-			const data: { token?: string } = await sendPostRequest("http://localhost:3000/auth/login", {
+			const data: { token?: string; userId?: string } = await sendPostRequest("http://localhost:3000/auth/login", {
 				username,
 				password,
 			});
 
 			console.log("Server response:", data);
 
-			if (data.token) {
+			if (data.token && data.userId) {
 				setAuthToken(data.token);
+				setUserId(data.userId);
+				
 				localStorage.setItem("authToken", data.token);
+				localStorage.setItem("userId", data.userId);
+
 				console.log("Authenticated with token:", data.token);
 
 				navigate("/"); // Redirect to homepage

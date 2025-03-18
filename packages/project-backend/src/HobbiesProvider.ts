@@ -7,7 +7,7 @@ export interface HobbyDocument {
 	hobbyType: string;
 	image: string;
 	rating: number;
-	author: string;
+	userId: string;
 }
 
 export class HobbiesProvider {
@@ -21,7 +21,7 @@ export class HobbiesProvider {
 		hobbyType: string;
 		image: string;
 		rating: number;
-		author: string;
+		userId: string;
 	}): Promise<string> {
 		const collectionName = process.env.HOBBIES_COLLECTION_NAME;
 		if (!collectionName) {
@@ -43,6 +43,6 @@ export class HobbiesProvider {
         }
         
         const collection = this.mongoClient.db().collection<HobbyDocument>(collectionName);
-        return await collection.find({ author: userId }).toArray();
+        return await collection.find({ userId: userId }).toArray();
     }
 }

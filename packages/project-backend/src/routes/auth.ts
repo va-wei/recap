@@ -13,37 +13,38 @@ if (!signatureKey) {
 }
 
 export function verifyAuthToken(
-    req: Request,
-    res: Response,
-    next: NextFunction // Call next() to run the next middleware or request handler
+	req: Request,
+	res: Response,
+	next: NextFunction // Call next() to run the next middleware or request handler
 ) {
-    console.log("Authorization header:", req.get("Authorization"));
-    const authHeader = req.get("Authorization");
-    // The header should say "Bearer <token string>".  Discard the Bearer part.
-    const token = authHeader && authHeader.split(" ")[1];
+	console.log("Authorization header:", req.get("Authorization"));
+	const authHeader = req.get("Authorization");
+	// The header should say "Bearer <token string>".  Discard the Bearer part.
+	const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) {
-        console.log("No token provided");
-        res.status(401).end();
-        return;
-    } else { // signatureKey already declared as a module-level variable
-        jwt.verify(token, signatureKey as string, (error, decoded) => {
-            if (decoded) {
-                res.locals.token = decoded;
-                next();
-            } else {
-                console.error("JWT verification error:", error);
-                res.status(403).end();
-                return;
-            }
-        });
-    }
+	if (!token) {
+		console.log("No token provided");
+		res.status(401).end();
+		return;
+	} else {
+		// signatureKey already declared as a module-level variable
+		jwt.verify(token, signatureKey as string, (error, decoded) => {
+			if (decoded) {
+				res.locals.token = decoded;
+				next();
+			} else {
+				console.error("JWT verification error:", error);
+				res.status(403).end();
+				return;
+			}
+		});
+	}
 }
 
-export function generateAuthToken(username: string): Promise<string> {
+export function generateAuthToken(username: string, userId: string): Promise<string> {
 	return new Promise<string>((resolve, reject) => {
 		jwt.sign(
-			{ username: username },
+			{ username: username, userId: userId },
 			signatureKey as string,
 			{ expiresIn: "1d" },
 			(error, token) => {
@@ -105,7 +106,7 @@ export function registerAuthRoutes(
 		async (req: Request, res: Response): Promise<void> => {
 			const { username, password } = req.body;
 
-            // no username or password
+			// no username or password
 			if (!username || !password) {
 				res.status(400).json({
 					error: "Bad request",
@@ -114,11 +115,23 @@ export function registerAuthRoutes(
 				return;
 			}
 			try {
+				const user = await credentialsProvider.getUserByUsername(
+					username
+				);
+
+				// If the user does not exist
+				if (!user) {
+					res.status(401).json({
+						error: "Incorrect username or password",
+					});	
+					return;
+				}
+
 				const isValid = await credentialsProvider.verifyPassword(
 					username,
 					password
 				);
-                // invalid username or password
+				// invalid username or password
 				if (!isValid) {
 					res.status(401).json({
 						error: "Incorrect username or password",
@@ -127,9 +140,9 @@ export function registerAuthRoutes(
 				}
 
 				// token creation
-				const token = await generateAuthToken(username);
+				const token = await generateAuthToken(username, user._id.toString());
 
-				res.status(200).json({ token }); // succes
+				res.status(200).json({ token, userId: user._id.toString() }); // success
 			} catch (error) {
 				console.error("Error in login: ", error);
 				res.status(500).json({ error: "Internal server error." });

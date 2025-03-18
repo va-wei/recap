@@ -1,41 +1,94 @@
 import React, { useRef, useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 
+interface FormResult {
+	type: "success" | "error";
+	message: string;
+}
+
 interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	addHobby: (title: string, date: string, hobbyType: string, image: string, rating: number) => void;
+	addHobby: (
+		title: string,
+		date: string,
+		hobbyType: string,
+		image: string,
+		rating: number
+	) => void;
+	userId: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby }) => {
-	if (!isOpen) return null; // prevent rendering when modal is closed
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
+	if (!isOpen) return null;
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [rating, setRating] = useState<string>("");
-    const [hobbyType, setHobbyType] = useState<string>("");
-    const [title, setTitle] = useState<string>("");
-    const [date, setDate] = useState<string>("");
+	const [selectedImage, setSelectedImage] = useState<File | null>(null); // Store file directly
+	const [rating, setRating] = useState<string>("");
+	const [hobbyType, setHobbyType] = useState<string>("");
+	const [title, setTitle] = useState<string>("");
+	const [date, setDate] = useState<string>("");
+	const [result, setResult] = useState<FormResult | null>(null);
+	const [isPending, setIsPending] = useState(false);
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-			onClose(); // trigger onClose when clicking outside the modal
+			onClose();
 		}
 	};
 
 	const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file);
-			setSelectedImage(imageUrl);
+			setSelectedImage(file); // Store the file object instead of URL
 		}
 	};
 
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (selectedImage) {
-			addHobby(title, date, hobbyType, selectedImage, parseInt(rating));
-		} else {
-			alert ("Please select an image.");
+
+		if (!selectedImage) {
+			alert("Please select an image.");
+			return;
+		}
+
+		setIsPending(true); // Set the loading state
+
+		try {
+			const formData = new FormData();
+			formData.append("title", title);
+			formData.append("date", date);
+			formData.append("hobbyType", hobbyType);
+			formData.append("rating", rating);
+			formData.append("userId", userId);
+
+			// Append the selected file (image)
+			if (selectedImage) {
+				formData.append("image", selectedImage);
+			}
+
+			const response = await fetch("/api/hobbies", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+				},
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to add hobby");
+			}
+
+			const data = await response.json();
+
+			// Call the addHobby prop to update the UI or state
+			addHobby(title, date, hobbyType, data.imageUrl, Number(rating));
+
+			setResult({ type: "success", message: "Hobby added successfully" });
+			onClose();
+		} catch (error) {
+			setResult({ type: "error", message: "Failed to add hobby" });
+		} finally {
+			setIsPending(false); // Reset loading state
 		}
 	};
 
@@ -92,7 +145,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby }) => {
 					</label>
 					{selectedImage && (
 						<div className="image-preview">
-							<img src={selectedImage} alt="Selected preview" />
+							<img src={URL.createObjectURL(selectedImage)} alt="Selected preview" />
 						</div>
 					)}
 					<label>
@@ -110,9 +163,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby }) => {
 							<option value="5">⭐⭐⭐⭐⭐</option>
 						</select>
 					</label>
-					<button type="submit">Submit</button>
+					<button type="submit" disabled={isPending}>
+						Submit
+					</button>
 				</form>
 				<button onClick={onClose}>Close</button>
+				{result && (
+					<div className={`result-message ${result.type}`}>
+						{result.message}
+					</div>
+				)}
 			</div>
 		</div>
 	);

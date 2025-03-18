@@ -1,124 +1,88 @@
 import express, { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { HobbiesProvider } from "../HobbiesProvider";
-// import {
-// 	hobbyMiddlewareFactory,
-// 	handleImageFileErrors,
-// } from "../hobbyUploadMiddleware";
+import {
+    imageMiddlewareFactory,
+    handleImageFileErrors,
+} from "../imageUploadMiddleware";
 import { verifyAuthToken } from "./auth";
 
 export function registerHobbyRoutes(
-	app: express.Application,
-	mongoClient: MongoClient
+    app: express.Application,
+    mongoClient: MongoClient
 ) {
-	const hobbyProvider = new HobbiesProvider(mongoClient);
-	app.get("/api/hobbies/", async (req: Request, res: Response) => {
-		try {
-			let userId: string | undefined = undefined;
-			if (typeof req.query.createdBy === "string") {
-				userId = req.query.createdBy;
-			}
+    const hobbyProvider = new HobbiesProvider(mongoClient);
+    
+    app.get("/api/hobbies", async (req: Request, res: Response) => {
+        try {
+            // Fetch userId from query parameters
+            const userId: string | undefined = req.query.createdBy as string;
 
-			const hobbies = await hobbyProvider.getHobbiesByUser(userId); 
+            // Get hobbies based on userId (or fetch all if no userId)
+            const hobbies = await hobbyProvider.getHobbiesByUser(userId);
 
-			res.json(hobbies);
-		} catch (error) {
-			console.error("Error fetching hobbies:", error);
-			res.status(500).json({ error: "Failed to fetch hobbies" });
-		}
-	});
+            res.json(hobbies);
+        } catch (error) {
+            console.error("Error fetching hobbies:", error);
+            res.status(500).json({ error: "Failed to fetch hobbies" });
+        }
+    });
 
-	// app.patch(
-	// 	"/api/images/:id",
-	// 	async (
-	// 		req: Request<{ id: string }, {}, { name: string }>,
-	// 		res: Response
-	// 	): Promise<void> => {
-	// 		try {
-	// 			const imageId = req.params.id;
-	// 			const newName = req.body.name;
+    // POST route for creating a new hobby
+    app.post(
+        "/api/hobbies",
+        verifyAuthToken, // Auth middleware to ensure the user is authenticated
+        imageMiddlewareFactory.single("image"), // Image upload middleware
+        handleImageFileErrors, // Error handler for image file errors
+        async (req: Request, res: Response) => {
+            try {
+                if (!req.body.title || !req.body.hobbyType || !req.body.date) {
+                    res.status(400).json({
+                        error: "Missing required hobby fields.",
+                    });
+                    return;
+                }
 
-	// 			console.log("PATCH req received for image id:", imageId);
-	// 			console.log("Requested new name:", newName);
+                if (!req.file) {
+                    res.status(400).json({
+                        error: "Image file is required.",
+                    });
+                    return;
+                }
 
-	// 			if (!newName) {
-	// 				// if name doesn't exist in req body
-	// 				res.status(400).send({
-	// 					error: "Bad request",
-	// 					message: "Missing name property",
-	// 				});
-	// 				return;
-	// 			}
+                // Get the userId from the JWT token
+                const userId = res.locals.token?.userId;
+                if (!userId) {
+                    res.status(401).json({
+                        error: "Unauthorized: Missing user info",
+                    });
+                    return;
+                }
 
-	// 			const matchedCount = await imageProvider.updateImageName(
-	// 				imageId,
-	// 				newName
-	// 			);
+                const hobbyDoc = {
+                    _id: req.file.filename,
+                    title: req.body.title,
+                    date: req.body.date,
+                    hobbyType: req.body.hobbyType,
+                    image: `/uploads/${req.file.filename}`, // Path to the uploaded image
+                    rating: 0, // Default rating
+                    userId: userId, // User who submitted the hobby
+                };
 
-	// 			if (matchedCount === 0) {
-	// 				// if image doesnt exist
-	// 				res.status(404).send({
-	// 					error: "Not found",
-	// 					message: "Image does not exist",
-	// 				});
-	// 				return;
-	// 			}
+                // Insert hobby into the database
+                const insertedId = await hobbyProvider.createHobby(hobbyDoc);
 
-	// 			res.status(204).send();
-	// 		} catch (error) {
-	// 			console.error("Error handling patch request:", error);
-	// 			res.status(500).json({ error: "Failed to process request" });
-	// 		}
-	// 	}
-	// );
-
-	// app.post(
-	// 	"/api/images",
-    //     verifyAuthToken,
-	// 	imageMiddlewareFactory.single("image"),
-	// 	handleImageFileErrors,
-	// 	async (
-	// 		req: Request<{}, {}, { name: string }>,
-	// 		res: Response
-	// 	): Promise<void> => {
-    //         console.log("Request reached /api/images");
-	// 		try {
-	// 			if (!req.file || !req.body.name) {
-	// 				res.status(400).json({
-	// 					error: "Image file and name are required.",
-	// 				});
-	// 				return;
-	// 			}
-
-	// 			const username = res.locals.token?.username;
-	// 			if (!username) {
-	// 				res.status(401).json({
-	// 					error: "Unauthorized: Missing user info",
-	// 				});
-    //                 return;
-	// 			}
-
-	// 			const imageDoc = {
-	// 				_id: req.file.filename,
-	// 				src: `/uploads/${req.file.filename}`,
-	// 				name: req.body.name,
-	// 				author: username,
-	// 				likes: 0,
-	// 			};
-
-	// 			const insertedId = await imageProvider.createImage(imageDoc);
-
-	// 			res.status(201).json({
-	// 				message: "Image uplaoded",
-	// 				id: insertedId,
-	// 				image: imageDoc,
-	// 			});
-	// 		} catch (error) {
-	// 			console.error("Error storing image metadata:", error);
-	// 			res.status(500).json({
-	// 				error: "Failed to store image metadata",
-	// 			});
-	// 		}
-	// 	}
-	// );
+                res.status(201).json({
+                    message: "Hobby created successfully",
+                    id: insertedId,
+                    hobby: hobbyDoc,
+                });
+            } catch (error) {
+                console.error("Error creating hobby:", error);
+                res.status(500).json({
+                    error: "Failed to create hobby",
+                });
+            }
+        }
+    );
 }

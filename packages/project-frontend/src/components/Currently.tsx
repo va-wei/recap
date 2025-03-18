@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHobbyFetching } from "../useHobbyFetching";
 import Spinner from "./Spinner";
 
 interface Hobby {
@@ -10,23 +11,16 @@ interface Hobby {
 	rating: number;
 }
 
-interface CurrentlyProps {
-	hobbies: Hobby[];
-}
+const Currently: React.FC = () => {
+	// Assuming you get userId and authToken from localStorage or other methods
+	const userId = localStorage.getItem("userId") || ""; 
+	const authToken = localStorage.getItem("authToken") || "";
 
-const Currently: React.FC<CurrentlyProps> = ({ hobbies }) => {
-	const [loading, setLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setLoading(false);
-		}, 3000);
-
-		return () => clearTimeout(timer);
-	}, []);
+	// Fetch hobbies using the custom hook
+	const { isLoading, fetchedHobbies, error } = useHobbyFetching(userId, authToken);
 
 	// group hobbies into categories
-	const groupedHobbies = hobbies.reduce<Record<string, Hobby[]>>((acc, hobby) => {
+	const groupedHobbies = fetchedHobbies.reduce<Record<string, Hobby[]>>((acc, hobby) => {
 		let category = "Doing..."; // Default category
 
 		if (hobby.hobbyType === "Movie" || hobby.hobbyType === "TV Show") {
@@ -35,7 +29,7 @@ const Currently: React.FC<CurrentlyProps> = ({ hobbies }) => {
 			category = "Reading...";
 		}
 
-		if (!acc[category]) acc[category] = []; // create array if category dne
+		if (!acc[category]) acc[category] = []; // create array if category doesn't exist
 		acc[category].push(hobby); // add hobby to correct category
 
 		return acc;
@@ -48,9 +42,14 @@ const Currently: React.FC<CurrentlyProps> = ({ hobbies }) => {
 			</header>
 
 			<div className="currently-section">
-				{loading ? (
+				{isLoading ? (
+					// Display spinner while loading
 					<Spinner />
+				) : error ? (
+					// Display error message if fetching fails
+					<p>Error: {error}</p>
 				) : (
+					// Display the grouped hobbies
 					Object.entries(groupedHobbies).map(([category, hobbies]) => (
 						<div key={category} className="category-row">
 							<h3 className="category-title">{category}</h3>
@@ -58,7 +57,7 @@ const Currently: React.FC<CurrentlyProps> = ({ hobbies }) => {
 								{hobbies.map((hobby) => (
 									<li key={hobby.id}>
 										<img
-											src={hobby.image}
+											src={`http://localhost:3000${hobby.image}`} // Assuming relative path
 											alt={hobby.title}
 											className="hobby-image"
 										/>

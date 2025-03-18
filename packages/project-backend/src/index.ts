@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import path from "path";
 import dotenv from "dotenv";
-// import { registerImageRoutes } from "./routes/hobbies";
+import { registerHobbyRoutes } from "./routes/hobbies";
 import { registerAuthRoutes, verifyAuthToken } from "./routes/auth";
 import cors from "cors";
 
@@ -34,7 +34,7 @@ async function setUpServer() {
         app.use("/uploads", express.static(IMAGE_UPLOAD_DIR))
 
         registerAuthRoutes(app, mongoClient);
-        // registerImageRoutes(app, mongoClient);
+        registerHobbyRoutes(app, mongoClient);
 
         app.get("/hello", (req: Request, res: Response) => {
             res.send("Hello, World");

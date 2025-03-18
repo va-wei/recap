@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import "./App.css";
 import Header from "./components/Header";
@@ -19,6 +19,7 @@ interface Hobby {
 	hobbyType: string;
 	image: string;
 	rating: number;
+	userId: string;
 }
 
 interface AppProps {
@@ -29,6 +30,19 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 	const [hobbiesList, setHobbiesList] = useState<Hobby[]>(hobbies);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [authToken, setAuthToken] = useState<string | null>(null);
+	const [userId, setUserId] = useState<string | null>(
+		localStorage.getItem("userId")
+	);
+
+	useEffect(() => {
+		const storedAuthToken = localStorage.getItem("authToken");
+		const storedUserId = localStorage.getItem("userId");
+
+		if (storedAuthToken && storedUserId) {
+			setAuthToken(storedAuthToken);
+			setUserId(storedUserId);
+		}
+	}, []);
 
 	const openModal = () => setIsModalOpen(true);
 
@@ -37,8 +51,14 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 		date: string,
 		hobbyType: string,
 		image: string,
-		rating: number
+		rating: number,
 	) {
+		if (!userId) {
+			// Handle case where userId is not found
+			alert('User is not logged in');
+			return;
+		}
+
 		const newHobby: Hobby = {
 			id: nanoid(),
 			title,
@@ -46,6 +66,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 			hobbyType,
 			image,
 			rating,
+			userId,
 		};
 		setHobbiesList([...hobbiesList, newHobby]);
 		setIsModalOpen(false);
@@ -61,7 +82,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 							path="/"
 							element={
 								<ProtectedRoute authToken={authToken}>
-									<Currently hobbies={hobbiesList} />
+									<Currently />
 									<Profile />
 								</ProtectedRoute>
 							}
@@ -77,7 +98,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 						<Route path="/register" element={<RegisterPage />} />
 						<Route
 							path="/login"
-							element={<LoginPage setAuthToken={setAuthToken} />}
+							element={<LoginPage setAuthToken={setAuthToken} setUserId={setUserId} />}
 						/>
 					</Routes>
 				</div>
@@ -86,6 +107,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 					isOpen={isModalOpen}
 					onClose={() => setIsModalOpen(false)}
 					addHobby={addHobby}
+					userId={userId || ""}
 				/>
 			</div>
 		</Router>

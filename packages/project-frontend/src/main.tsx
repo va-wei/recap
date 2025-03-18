@@ -18,6 +18,7 @@ const DATA = [
 		date: "2024-02-01",
 		image: captainAmericaPoster,
 		rating: 5,
+		userId: "1"
 	},
 	{
 		id: nanoid(),
@@ -26,6 +27,7 @@ const DATA = [
 		hobbyType: "TV Show",
 		image: theFirstFrostPoster,
 		rating: 5,
+		userId: "1"
 	},
 	{
 		id: nanoid(),
@@ -34,6 +36,7 @@ const DATA = [
 		hobbyType: "Book",
 		image: divineRivalsCover,
 		rating: 4,
+		userId: "1"
 	},
 	{
 		id: nanoid(),
@@ -42,6 +45,7 @@ const DATA = [
 		hobbyType: "TV show",
 		image: moonlightMystiquePoster,
 		rating: 3,
+		userId: "1"
 	},
 ];
 

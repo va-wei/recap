@@ -62,5 +62,21 @@ Content-Type: application/json
 
 ### get with newuser credentials
 
-GET http://localhost:3000/api/images
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIiLCJpYXQiOjE3NDE2MjUwMDYsImV4cCI6MTc0MTcxMTQwNn0.2GISsGWm6iAYLYRT2TXN1dgjWVa9ytpUoQRZdso8GPE
+GET http://localhost:3000/api/hobbies
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvIiwiaWF0IjoxNzQyMjY5MTE0LCJleHAiOjE3NDIzNTU1MTR9.dnbIK6yCvpy4qgjnKGYeOZMQrsFHUuJg4jFFbM5Q6UM
+
+### Insert Hobby Example
+POST http://localhost:3000/api/hobbies
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvIiwiaWF0IjoxNzQyMjczMjczLCJleHAiOjE3NDIzNTk2NzN9.sp8HsPNUoDgv3tobPtUvbwdHDDLbanaCB8bkaQtcGZU
+Content-Type: application/json
+
+{
+  "id": "nanoid_placeholder",
+  "title": "The Double",
+  "date": "2024-02-14",
+  "hobbyType": "TV Show",
+  "image": "./uploads/the-double",  // Replace with actual image URL or file path
+  "rating": 5,
+  "userId": "67d8c5a157c0437e429c5aa6"  // Replace with the toString() value of the _id
+}
+

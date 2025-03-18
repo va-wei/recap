@@ -45,4 +45,13 @@ export class CredentialsProvider {
 
         return await bcrypt.compare(plaintextPassword, user.password);
     }
+
+    async getUserByUsername(username: string) {
+        const user = await this.collection.findOne({ username });
+        if (!user) {
+            console.log("User not found");
+            return null; // If no user found, return null
+        }
+        return user; // Return the user document (including userId)
+    }
 }
