@@ -1,4 +1,10 @@
-import React, { useRef, useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import React, {
+	useRef,
+	useState,
+	ChangeEvent,
+	FormEvent,
+	MouseEvent,
+} from "react";
 
 interface FormResult {
 	type: "success" | "error";
@@ -23,19 +29,34 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null); // Store file directly
-	const [rating, setRating] = useState<string>("");
+	const [rating, setRating] = useState<number>(1);
 	const [hobbyType, setHobbyType] = useState<string>("");
 	const [title, setTitle] = useState<string>("");
 	const [date, setDate] = useState<string>("");
 	const [result, setResult] = useState<FormResult | null>(null);
 	const [isPending, setIsPending] = useState(false);
 
+	// Reset form when the modal is closed
+	const resetForm = () => {
+		setTitle("");
+		setDate("");
+		setHobbyType("");
+		setSelectedImage(null);
+		setRating(0); // Reset rating to default (0)
+	};
+
+	// Close handler with reset
 	const handleClickOutside = (event: MouseEvent) => {
-		if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+		if (
+			modalRef.current &&
+			!modalRef.current.contains(event.target as Node)
+		) {
+			resetForm();
 			onClose();
 		}
 	};
 
+	// Handle image selection
 	const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (file) {
@@ -43,11 +64,20 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 		}
 	};
 
+	// Handle form submission
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
+		console.log("Submitting with rating:", rating);
+
 		if (!selectedImage) {
 			alert("Please select an image.");
+			return;
+		}
+
+		if (rating === 0) {
+			// Ensure a valid rating is selected
+			alert("Please select a valid rating.");
 			return;
 		}
 
@@ -58,7 +88,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 			formData.append("title", title);
 			formData.append("date", date);
 			formData.append("hobbyType", hobbyType);
-			formData.append("rating", rating);
+			formData.append("rating", String(rating)); // Keep it as string because FormData appends as string
 			formData.append("userId", userId);
 
 			// Append the selected file (image)
@@ -69,7 +99,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 			const response = await fetch("/api/hobbies", {
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+					Authorization: `Bearer ${localStorage.getItem(
+						"authToken"
+					)}`,
 				},
 				body: formData,
 			});
@@ -81,9 +113,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 			const data = await response.json();
 
 			// Call the addHobby prop to update the UI or state
-			addHobby(title, date, hobbyType, data.imageUrl, Number(rating));
+			addHobby(title, date, hobbyType, data.imageUrl, rating);
 
 			setResult({ type: "success", message: "Hobby added successfully" });
+			resetForm();
 			onClose();
 		} catch (error) {
 			setResult({ type: "error", message: "Failed to add hobby" });
@@ -145,17 +178,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 					</label>
 					{selectedImage && (
 						<div className="image-preview">
-							<img src={URL.createObjectURL(selectedImage)} alt="Selected preview" />
+							<img
+								src={URL.createObjectURL(selectedImage)}
+								alt="Selected preview"
+							/>
 						</div>
 					)}
 					<label>
 						Rating:
 						<select
 							value={rating}
-							onChange={(e) => setRating(e.target.value)}
+							onChange={(e) => {
+								const newRating = Number(e.target.value);
+								setRating(newRating);
+								console.log("Selected Rating:", newRating); // Log the selected rating
+							  }}
 							className="modal-input"
 						>
-							<option value="">Select Rating</option>
+							<option value="0">Select Rating</option>
 							<option value="1">⭐</option>
 							<option value="2">⭐⭐</option>
 							<option value="3">⭐⭐⭐</option>

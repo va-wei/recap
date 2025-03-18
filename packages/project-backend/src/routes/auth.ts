@@ -46,7 +46,7 @@ export function generateAuthToken(username: string, userId: string): Promise<str
 		jwt.sign(
 			{ username: username, userId: userId },
 			signatureKey as string,
-			{ expiresIn: "1d" },
+			{ expiresIn: "1h" },
 			(error, token) => {
 				if (error) reject(error);
 				else resolve(token as string);

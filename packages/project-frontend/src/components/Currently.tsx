@@ -13,27 +13,33 @@ interface Hobby {
 
 const Currently: React.FC = () => {
 	// Assuming you get userId and authToken from localStorage or other methods
-	const userId = localStorage.getItem("userId") || ""; 
+	const userId = localStorage.getItem("userId") || "";
 	const authToken = localStorage.getItem("authToken") || "";
 
 	// Fetch hobbies using the custom hook
-	const { isLoading, fetchedHobbies, error } = useHobbyFetching(userId, authToken);
+	const { isLoading, fetchedHobbies, error } = useHobbyFetching(
+		userId,
+		authToken
+	);
 
 	// group hobbies into categories
-	const groupedHobbies = fetchedHobbies.reduce<Record<string, Hobby[]>>((acc, hobby) => {
-		let category = "Doing..."; // Default category
+	const groupedHobbies = fetchedHobbies.reduce<Record<string, Hobby[]>>(
+		(acc, hobby) => {
+			let category = "Doing..."; // Default category
 
-		if (hobby.hobbyType === "Movie" || hobby.hobbyType === "TV Show") {
-			category = "Watching...";
-		} else if (hobby.hobbyType === "Book") {
-			category = "Reading...";
-		}
+			if (hobby.hobbyType === "Movie" || hobby.hobbyType === "TV Show") {
+				category = "Watching...";
+			} else if (hobby.hobbyType === "Book") {
+				category = "Reading...";
+			}
 
-		if (!acc[category]) acc[category] = []; // create array if category doesn't exist
-		acc[category].push(hobby); // add hobby to correct category
+			if (!acc[category]) acc[category] = []; // create array if category doesn't exist
+			acc[category].push(hobby); // add hobby to correct category
 
-		return acc;
-	}, {});
+			return acc;
+		},
+		{}
+	);
 
 	return (
 		<div className="currently-container">
@@ -50,29 +56,44 @@ const Currently: React.FC = () => {
 					<p>Error: {error}</p>
 				) : (
 					// Display the grouped hobbies
-					Object.entries(groupedHobbies).map(([category, hobbies]) => (
-						<div key={category} className="category-row">
-							<h3 className="category-title">{category}</h3>
-							<ul className="hobby-list">
-								{hobbies.map((hobby) => (
-									<li key={hobby.id}>
-										<img
-											src={`http://localhost:3000${hobby.image}`} // Assuming relative path
-											alt={hobby.title}
-											className="hobby-image"
-										/>
-										<div className="hobby-info">
-											<p className="hobby-title">{hobby.title}</p>
-											<p className="hobby-date">{hobby.date}</p>
-											<p className="hobby-rating">
-												{"⭐".repeat(hobby.rating)}
-											</p>
-										</div>
-									</li>
-								))}
-							</ul>
-						</div>
-					))
+					Object.entries(groupedHobbies).map(
+						([category, hobbies]) => (
+							<div key={category} className="category-row">
+								<h3 className="category-title">{category}</h3>
+								<ul className="hobby-list">
+									{hobbies.map((hobby) => (
+										<li key={hobby.id}>
+											<img
+												src={`http://localhost:3000${hobby.image}`} // Assuming relative path
+												alt={hobby.title}
+												className="hobby-image"
+											/>
+											<div className="hobby-info">
+												<p className="hobby-title">
+													{hobby.title}
+												</p>
+												<p className="hobby-date">
+													{hobby.date}
+												</p>
+												<p className="hobby-rating">
+													{"⭐".repeat(
+														Math.max(
+															0,
+															Math.min(
+																5,
+																hobby.rating
+															)
+														)
+													)}{" "}
+													{/* Ensures the rating stays within 1-5 */}
+												</p>
+											</div>
+										</li>
+									))}
+								</ul>
+							</div>
+						)
+					)
 				)}
 			</div>
 		</div>

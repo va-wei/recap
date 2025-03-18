@@ -59,13 +59,15 @@ export function registerHobbyRoutes(
                     return;
                 }
 
+				const rating = req.body.rating ? Number(req.body.rating) : 0;
+
                 const hobbyDoc = {
                     _id: req.file.filename,
                     title: req.body.title,
                     date: req.body.date,
                     hobbyType: req.body.hobbyType,
                     image: `/uploads/${req.file.filename}`, // Path to the uploaded image
-                    rating: 0, // Default rating
+                    rating: rating, // Default rating
                     userId: userId, // User who submitted the hobby
                 };
 
