@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import UsernamePasswordForm from "./UsernamePasswordForm";
 import { sendPostRequest } from "../sendPostRequest";
+import { useNavigate } from "react-router";
 
 export function RegisterPage() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const navigate = useNavigate();
 
 	const handleFormSubmit = async (username: string, password: string): Promise<void> => {
 		console.log("Username:", username);
@@ -17,6 +19,10 @@ export function RegisterPage() {
 
 			console.log(`Registration successful:`, result);
 			setErrorMessage(null);
+
+			setTimeout(() => {
+				navigate("/login");
+			  }, 2000);
 		} catch (error) {
 			if (error instanceof Error) {
 				if (error.message.includes("400")) {
@@ -31,12 +37,12 @@ export function RegisterPage() {
 	};
 
 	return (
-		<div>
-			<h1>Register a New Account</h1>
-			{errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-			<UsernamePasswordForm onSubmit={handleFormSubmit} />
+		<div className="login-container">
+		  <h1 className="login-title">Register a New Account</h1> 
+		  {errorMessage && <p className="error-message">{errorMessage}</p>} 
+		  <UsernamePasswordForm onSubmit={handleFormSubmit} />
 		</div>
-	);
+	  );
 }
 
 export default RegisterPage;

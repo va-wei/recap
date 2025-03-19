@@ -67,63 +67,57 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 	// Handle form submission
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
-		console.log("Submitting with rating:", rating);
-
+	
 		if (!selectedImage) {
 			alert("Please select an image.");
 			return;
 		}
-
+	
 		if (rating === 0) {
-			// Ensure a valid rating is selected
 			alert("Please select a valid rating.");
 			return;
 		}
-
-		setIsPending(true); // Set the loading state
-
+	
+		setIsPending(true);
+	
 		try {
 			const formData = new FormData();
 			formData.append("title", title);
 			formData.append("date", date);
 			formData.append("hobbyType", hobbyType);
-			formData.append("rating", String(rating)); // Keep it as string because FormData appends as string
+			formData.append("rating", String(rating));
 			formData.append("userId", userId);
-
-			// Append the selected file (image)
+	
 			if (selectedImage) {
 				formData.append("image", selectedImage);
 			}
-
+	
 			const response = await fetch("/api/hobbies", {
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${localStorage.getItem(
-						"authToken"
-					)}`,
+					Authorization: `Bearer ${localStorage.getItem("authToken")}`,
 				},
 				body: formData,
 			});
-
+	
 			if (!response.ok) {
 				throw new Error("Failed to add hobby");
 			}
-
+	
 			const data = await response.json();
-
-			// Call the addHobby prop to update the UI or state
+	
+			// Update the state immediately with the new hobby
 			addHobby(title, date, hobbyType, data.imageUrl, rating);
-
+	
 			setResult({ type: "success", message: "Hobby added successfully" });
 			resetForm();
 			onClose();
 		} catch (error) {
 			setResult({ type: "error", message: "Failed to add hobby" });
 		} finally {
-			setIsPending(false); // Reset loading state
+			setIsPending(false);
 		}
-	};
+	};	
 
 	return (
 		<div className="modal-overlay" onClick={handleClickOutside}>

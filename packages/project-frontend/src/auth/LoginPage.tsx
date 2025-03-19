@@ -52,12 +52,12 @@ export function LoginPage({ setAuthToken, setUserId }: LoginPageProps) {
 	};
 
 	return (
-		<div>
-			<h1>Login</h1>
-			{loginError && <p style={{ color: "red" }}>{loginError}</p>}
+		<div className="login-container">
+			<h1 className="login-title">Login</h1>
+			{loginError && <p className="login-error">{loginError}</p>}
 			<UsernamePasswordForm onSubmit={handleLoginSubmit} />
-			<p>
-				Don't have an account? <Link to="/register">Register here</Link>
+			<p className="register-link">
+				Don't have an account? <Link to="/register" className="register-link-text">Register here</Link>
 			</p>
 		</div>
 	);

@@ -39,26 +39,33 @@ const UsernamePasswordForm: React.FC<UsernamePasswordFormProps> = ({
 	return (
 		<>
 			{result && (
-				<p
-					style={{
-						color: result.type === "error" ? "red" : "green",
-						fontWeight: "bold",
-					}}
-				>
-					{result.message}
-				</p>
+				<p className={`message ${result.type}`}>{result.message}</p>
 			)}
 			{isPending && <p className="message loading">Loading ...</p>}
-			<form action={submitAction}>
-				<label>
+			<form className="form-container" action={submitAction}>
+				<label className="form-label">
 					<span>Username</span>
-					<input name="username" type="text" disabled={isPending} />
+					<input
+						className="form-input"
+						name="username"
+						type="text"
+						disabled={isPending}
+					/>
 				</label>
-				<label>
+				<label className="form-label">
 					<span>Password</span>
-					<input name="password" type="password" disabled={isPending} />
+					<input
+						className="form-input"
+						name="password"
+						type="password"
+						disabled={isPending}
+					/>
 				</label>
-				<button type="submit" disabled={isPending}>
+				<button
+					className="form-button"
+					type="submit"
+					disabled={isPending}
+				>
 					Submit
 				</button>
 			</form>

@@ -44,18 +44,23 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 		}
 	}, []);
 
-	const openModal = () => setIsModalOpen(true);
+	const openModal = () => {
+		if (!authToken) {
+			alert("You must be logged in to add a hobby.");
+			return;
+		}
+		setIsModalOpen(true);
+	};
 
-	function addHobby(
+	const addHobby = (
 		title: string,
 		date: string,
 		hobbyType: string,
 		image: string,
-		rating: number,
-	) {
+		rating: number
+	) => {
 		if (!userId) {
-			// Handle case where userId is not found
-			alert('User is not logged in');
+			alert("User is not logged in");
 			return;
 		}
 
@@ -68,9 +73,15 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 			rating,
 			userId,
 		};
-		setHobbiesList([...hobbiesList, newHobby]);
+
+		setHobbiesList((prevHobbies) => {
+			const updatedHobbies = [...prevHobbies, newHobby];
+			console.log("Updated Hobbies List:", updatedHobbies);
+			return updatedHobbies;
+		});
+
 		setIsModalOpen(false);
-	}
+	};
 
 	return (
 		<Router>
@@ -98,7 +109,12 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 						<Route path="/register" element={<RegisterPage />} />
 						<Route
 							path="/login"
-							element={<LoginPage setAuthToken={setAuthToken} setUserId={setUserId} />}
+							element={
+								<LoginPage
+									setAuthToken={setAuthToken}
+									setUserId={setUserId}
+								/>
+							}
 						/>
 					</Routes>
 				</div>
