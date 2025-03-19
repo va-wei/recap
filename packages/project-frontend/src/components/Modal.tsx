@@ -96,7 +96,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-					"Content-Type": "application/json",
 				},
 				body: formData,
 			});

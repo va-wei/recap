@@ -43,7 +43,6 @@ export function useProfileFetching(authToken: string) {
                 const response = await fetch(`/api/profiles`, {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
-                        "Content-Type": "application/json",
                     },
                 });
 
