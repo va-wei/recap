@@ -14,7 +14,7 @@ export function LoginPage({ setAuthToken, setUserId }: LoginPageProps) {
 
 	const handleLoginSubmit = async (username: string, password: string): Promise<void> => {
 		try {
-			const data: { token?: string; userId?: string } = await sendPostRequest("http://localhost:3000/auth/login", {
+			const data: { token?: string; userId?: string } = await sendPostRequest("/auth/login", {
 				username,
 				password,
 			});

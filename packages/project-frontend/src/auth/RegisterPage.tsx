@@ -12,7 +12,7 @@ export function RegisterPage() {
 		console.log("Password:", password);
 
 		try {
-			const result = await sendPostRequest("http://localhost:3000/auth/register", {
+			const result = await sendPostRequest("/auth/register", {
 				username,
 				password,
 			});
