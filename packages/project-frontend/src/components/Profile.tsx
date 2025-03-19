@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState, FormEvent, useEffect } from "react";
 import DarkModeSwitch from "./DarkMode.tsx";
-import defaultProfilePic from "../assets/def-no-pfp.png";
 import { useProfileFetching } from "../hooks/useProfileFetching.ts";
 
 const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
@@ -96,7 +95,7 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 							? imagePreview || undefined
 							: profile?.avatar
 							? `${profile.avatar}`
-							: defaultProfilePic
+							: "/def-no-pfp.png"
 					}
 					alt="Profile"
 					className="profile-picture"

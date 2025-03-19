@@ -98,7 +98,7 @@ export function registerAuthRoutes(
 				const user = await credentialsProvider.getUserByUsername(
 					username
 				);
-				const defaultAvatar = "/uploads/def-no-pfp.png";
+				const defaultAvatar = "/def-no-pfp.png";
 
 				if (!user) {
 					res.status(500).json({ error: "User not found after registration" });
