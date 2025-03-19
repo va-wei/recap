@@ -86,7 +86,7 @@ const App: React.FC<AppProps> = ({ hobbies }) => {
 	return (
 		<Router>
 			<div className="app-container">
-				<Header />
+				<Header setAuthToken={setAuthToken} setUserId={setUserId} />
 				<div className="main-content">
 					<Routes>
 						<Route

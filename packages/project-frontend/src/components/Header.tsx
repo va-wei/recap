@@ -1,11 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  setAuthToken: React.Dispatch<React.SetStateAction<string | null>>;
+  setUserId: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
+const Header: React.FC<HeaderProps> = ({ setAuthToken, setUserId }) => {
   const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
+    setAuthToken(null);
+    setUserId(null);
     
     navigate("/login");
   };
