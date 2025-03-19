@@ -111,6 +111,7 @@ export function registerAuthRoutes(
 					username: user.username,
 					bio: "", // Default bio or empty
 					avatar: defaultAvatar, // Default avatar URL or empty
+					friends: [],
 				};
 
 				// Insert the profile into the profiles collection

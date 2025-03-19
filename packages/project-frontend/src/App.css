@@ -474,7 +474,7 @@ textarea.profile-input {
 }
 
 .add-friend button:hover {
-	background-color: var(--color-text-shadow);
+	background-color: var(--color-text-primary);
 }
 
 /* dark mode toggling */

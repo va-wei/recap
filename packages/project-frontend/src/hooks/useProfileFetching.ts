@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 
+interface Friend {
+    id: string;
+    name: string;
+    recentHobby: string;
+}
+
 interface ProfileData {
     userId: string;
     name: string;
     username: string;
     bio: string;
     avatar: string | null; 
+    friends: Friend[];
 }
 
 /**
@@ -44,6 +51,7 @@ export function useProfileFetching(authToken: string) {
                 }
 
                 const data = await response.json();
+                console.log("Fetched profile:", data);
 
                 if (!isStale) {
                     setProfile(data);
