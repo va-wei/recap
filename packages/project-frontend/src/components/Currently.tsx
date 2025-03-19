@@ -63,7 +63,7 @@ const Currently: React.FC = () => {
 									{hobbies.map((hobby) => (
 										<li key={hobby.id}>
 											<img
-												src={`http://localhost:3000${hobby.image}`} 
+												src={`${hobby.image}`} 
 												alt={hobby.title}
 												className="hobby-image"
 											/>

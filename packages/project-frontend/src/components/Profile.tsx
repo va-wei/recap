@@ -71,7 +71,7 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 			// immediately update image preview with new avatar URL
 			if (updatedProfile.avatar) {
 				setImagePreview(
-					`http://localhost:3000${updatedProfile.avatar}`
+					`${updatedProfile.avatar}`
 				);
 			}
 		} catch (error) {
@@ -95,7 +95,7 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 						profilePic 
 							? imagePreview || undefined
 							: profile?.avatar
-							? `http://localhost:3000${profile.avatar}`
+							? `${profile.avatar}`
 							: defaultProfilePic
 					}
 					alt="Profile"
