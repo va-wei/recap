@@ -150,18 +150,21 @@ export function registerProfileRoutes(
 				const hobbiesCollection = mongoClient
 					.db()
 					.collection("hobbies"); // Change to your actual hobbies collection
-				const recentHobbyEntry = await hobbiesCollection.findOne(
-					{ userId: friendProfile.userId },
-					{ sort: { createdAt: -1 } } // Sort by most recent
-				);
+				const recentHobbyEntry = await hobbiesCollection
+					.find({ userId: friendProfile.userId })
+					.sort({ date: -1 }) // Sort by date in descending order
+					.limit(1) // Limit to the most recent hobby
+					.toArray();
 
-				// Format the recent hobby
-				const recentHobby = recentHobbyEntry
-					? formatHobby({
-							title: recentHobbyEntry.title,
-							hobbyType: recentHobbyEntry.hobbyType,
-					  })
-					: "No recent hobby";
+				console.log("Recent hobby entry:", recentHobbyEntry); // Log to inspect the data
+
+				const recentHobby =
+					recentHobbyEntry.length > 0
+						? formatHobby({
+								title: recentHobbyEntry[0].title,
+								hobbyType: recentHobbyEntry[0].hobbyType,
+						  })
+						: "No recent hobby";
 
 				// Add the friend's details to the user's friends list
 				const updatedFriends = [
@@ -215,6 +218,7 @@ export function registerProfileRoutes(
 					return;
 				}
 
+				// Find the user's profile
 				const profile = await profilesCollection.findOne({ userId });
 
 				if (!profile) {
@@ -222,29 +226,53 @@ export function registerProfileRoutes(
 					return;
 				}
 
-				// Check if the friend exists in the list
-				if (!profile.friends.includes(friendUsername)) {
-					res.status(400).json({ error: "Friend not found" });
+				// Find the friend by their username
+				const friendProfile = await profilesCollection.findOne({
+					username: friendUsername,
+				});
+
+				if (!friendProfile) {
+					res.status(404).json({ error: "Friend not found" });
 					return;
 				}
 
-				// Update the profile to remove the friend
-				const updateResult = await profilesCollection.updateOne(
-					{ userId },
-					{
-						$pull: { friends: friendUsername }, // Remove the friend from the friends array
-					}
+				// Check if the friend is in the user's friends list by their userId
+				const friendExists = profile.friends.some(
+					(friend: any) => friend.id === friendProfile._id.toString()
 				);
 
-				if (updateResult.matchedCount === 0) {
-					res.status(404).json({ error: "Profile not found" });
+				if (!friendExists) {
+					res.status(400).json({
+						error: "Friend not found in your list",
+					});
 					return;
 				}
 
-				const updatedProfile = await profilesCollection.findOne({
-					userId,
+				// Manually filter out the friend from the user's friends list
+				const updatedFriends = profile.friends.filter(
+					(friend: any) => friend.id !== friendProfile._id.toString()
+				);
+
+				// Update the user's profile with the new friends list
+				await profilesCollection.updateOne(
+					{ userId },
+					{ $set: { friends: updatedFriends } } // Set the new friends array
+				);
+
+				// Also, remove the current user from the friend's friends list
+				const friendUpdatedFriends = friendProfile.friends.filter(
+					(friend: any) => friend.id !== userId
+				);
+
+				// Update the friend's profile with the new friends list
+				await profilesCollection.updateOne(
+					{ userId: friendProfile.userId },
+					{ $set: { friends: friendUpdatedFriends } } // Set the new friends array for the friend
+				);
+
+				res.status(200).json({
+					message: "Friend removed successfully",
 				});
-				res.json(updatedProfile);
 			} catch (error) {
 				console.error("Error removing friend:", error);
 				res.status(500).json({ error: "Failed to remove friend" });
