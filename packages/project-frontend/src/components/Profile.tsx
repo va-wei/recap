@@ -57,6 +57,7 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 				method: "PATCH",
 				headers: {
 					Authorization: `Bearer ${authToken}`,
+					"Content-Type": "application/json",
 				},
 				body: formData,
 			});

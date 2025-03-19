@@ -40,6 +40,7 @@ export function useHobbyFetching(userId: string, authToken: string, delay = 1000
 				const response = await fetch(`/api/hobbies?createdBy=${userId}`, {
 					headers: {
 						Authorization: `Bearer ${authToken}`,
+						"Content-Type": "application/json",
 					},
 				});
 

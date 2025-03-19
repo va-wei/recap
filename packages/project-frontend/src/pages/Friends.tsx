@@ -29,6 +29,7 @@ const Friends: React.FC = () => {
 				{
 					headers: {
 						Authorization: `Bearer ${authToken}`,
+						"Content-Type": "application/json",
 					},
 				}
 			);
