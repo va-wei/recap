@@ -10,6 +10,7 @@ dotenv.config();
 const storageEngine = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = process.env.IMAGE_UPLOAD_DIR || path.join(__dirname, "../uploads");
+        console.log('Upload directory:', uploadDir);
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {

@@ -22,7 +22,7 @@ async function setUpServer() {
     try {
         const mongoClient = await MongoClient.connect(connectionString);
         const collectionInfos = await mongoClient.db().listCollections().toArray();
-        const IMAGE_UPLOAD_DIR = process.env.IMAGE_UPLOAD_DIR || path.join(__dirname, "uploads");
+        const IMAGE_UPLOAD_DIR = process.env.IMAGE_UPLOAD_DIR || path.join(__dirname, "../uploads");
         //console.log(collectionInfos.map((collectionInfo: { name: string }) => collectionInfo.name)); // For debug only
 
         const app = express();
