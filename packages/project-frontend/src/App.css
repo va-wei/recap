@@ -431,8 +431,14 @@ textarea.profile-input {
 /* friends component */
 .friends-container {
 	padding: var(--spacing-size-medium);
-	max-width: 30vw;
-	font-size: clamp(0.4rem, calc(0.4rem + 1vw), 1rem);
+	width: 100%;
+	font-size: clamp(0.8rem, calc(0.8rem + 1vw), 1rem);
+}
+
+.friends-container h2 {
+	font-size: 1.7em;
+	font-weight: bold;
+	font-family: var(--font-subheading);
 }
 
 .friends-container ul {
@@ -445,6 +451,19 @@ textarea.profile-input {
 	padding: var(--spacing-size-small);
 	border-radius: 10px;
 	margin-bottom: var(--spacing-size-small);
+	position: relative; /* Needed for absolute positioning of the button */
+}
+
+.friends-container li button {
+	position: absolute;
+	right: 10px; /* Align button to the right */
+	top: 50%; /* Vertically center the button */
+	transform: translateY(-50%); /* Adjust for exact vertical centering */
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: red; /* Adjust button color */
+	font-size: 20px; /* Adjust size of the button */
 }
 
 .add-friend {
@@ -570,7 +589,7 @@ textarea.profile-input {
 	padding: var(--spacing-size-medium-big);
 	border: 1px solid #ccc;
 	border-radius: 8px;
-	background-color: #f9f9f9;
+	background-color: var(--color-login-background);
 }
 
 .form-label {

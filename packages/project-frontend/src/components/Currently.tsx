@@ -12,11 +12,10 @@ interface Hobby {
 }
 
 const Currently: React.FC = () => {
-	// Assuming you get userId and authToken from localStorage or other methods
 	const userId = localStorage.getItem("userId") || "";
 	const authToken = localStorage.getItem("authToken") || "";
 
-	// Fetch hobbies using the custom hook
+	// fetch hobbies
 	const { isLoading, fetchedHobbies, error } = useHobbyFetching(
 		userId,
 		authToken
@@ -49,13 +48,13 @@ const Currently: React.FC = () => {
 
 			<div className="currently-section">
 				{isLoading ? (
-					// Display spinner while loading
+					// display spinner while loading
 					<Spinner />
 				) : error ? (
-					// Display error message if fetching fails
+					// display error message if fetching fails
 					<p>Error: {error}</p>
 				) : (
-					// Display the grouped hobbies
+					// display the grouped hobbies
 					Object.entries(groupedHobbies).map(
 						([category, hobbies]) => (
 							<div key={category} className="category-row">
@@ -64,7 +63,7 @@ const Currently: React.FC = () => {
 									{hobbies.map((hobby) => (
 										<li key={hobby.id}>
 											<img
-												src={`http://localhost:3000${hobby.image}`} // Assuming relative path
+												src={`http://localhost:3000${hobby.image}`} 
 												alt={hobby.title}
 												className="hobby-image"
 											/>
@@ -85,7 +84,6 @@ const Currently: React.FC = () => {
 															)
 														)
 													)}{" "}
-													{/* Ensures the rating stays within 1-5 */}
 												</p>
 											</div>
 										</li>

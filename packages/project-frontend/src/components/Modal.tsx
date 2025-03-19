@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 	if (!isOpen) return null;
 
 	const modalRef = useRef<HTMLDivElement | null>(null);
-	const [selectedImage, setSelectedImage] = useState<File | null>(null); // Store file directly
+	const [selectedImage, setSelectedImage] = useState<File | null>(null); 
 	const [rating, setRating] = useState<number>(0);
 	const [hobbyType, setHobbyType] = useState<string>("");
 	const [title, setTitle] = useState<string>("");
@@ -36,16 +36,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 	const [result, setResult] = useState<FormResult | null>(null);
 	const [isPending, setIsPending] = useState(false);
 
-	// Reset form when the modal is closed
+	// reset form when the modal is closed
 	const resetForm = () => {
 		setTitle("");
 		setDate("");
 		setHobbyType("");
 		setSelectedImage(null);
-		setRating(0); // Reset rating to default (0)
+		setRating(0); // reset rating to default (0)
 	};
 
-	// Close handler with reset
+	// close handler with reset
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
 			modalRef.current &&
@@ -56,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 		}
 	};
 
-	// Handle image selection
+	// image selection
 	const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (file) {
@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 		}
 	};
 
-	// Handle form submission
+	// form submission
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 	
@@ -106,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 	
 			const data = await response.json();
 	
-			// Update the state immediately with the new hobby
+			// update the state immediately with the new hobby
 			addHobby(title, date, hobbyType, data.imageUrl, rating);
 	
 			setResult({ type: "success", message: "Hobby added successfully" });
@@ -185,7 +185,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, addHobby, userId }) => {
 							onChange={(e) => {
 								const newRating = Number(e.target.value);
 								setRating(newRating);
-								console.log("Selected Rating:", newRating); // Log the selected rating
+								console.log("Selected Rating:", newRating); 
 							  }}
 							className="modal-input"
 						>

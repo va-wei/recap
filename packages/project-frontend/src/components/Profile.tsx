@@ -10,16 +10,16 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 	const [name, setName] = useState<string>("");
 	const [username, setUsername] = useState<string>("");
 	const [bio, setBio] = useState<string>("");
-	const [profilePic, setProfilePic] = useState<File | null>(null); // Store file directly for upload
-	const [imagePreview, setImagePreview] = useState<string | null>(null); // Store image preview URL
+	const [profilePic, setProfilePic] = useState<File | null>(null); 
+	const [imagePreview, setImagePreview] = useState<string | null>(null); 
 
-	// Set the state with fetched profile data when it's available
+	// set the state with fetched profile data when it's available
 	useEffect(() => {
 		if (profile && profile.avatar) {
 			setName(profile.name);
 			setUsername(profile.username);
 			setBio(profile.bio);
-			setImagePreview(profile.avatar); // Set the avatar image preview from the backend
+			setImagePreview(profile.avatar); // set the avatar image preview from the backend
 		}
 	}, [profile]);
 
@@ -30,17 +30,16 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 		setter: React.Dispatch<React.SetStateAction<string>>
 	) => setter(event.target.value); // input changes
 
-	// Handle profile picture file selection and preview
+	// handle profile picture file selection and preview
 	const handleProfilePicChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
 		if (file) {
-			setProfilePic(file); // Store the file object
-			const previewUrl = URL.createObjectURL(file); // Create a URL for the image preview
-			setImagePreview(previewUrl); // Set the preview URL
+			setProfilePic(file); 
+			const previewUrl = URL.createObjectURL(file); 
+			setImagePreview(previewUrl); 
 		}
 	};
 
-	// Handle form submissions (save changes)
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
@@ -69,7 +68,7 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 			const updatedProfile = await response.json();
 			setIsEditing(false);
 
-			// Immediately update image preview with new avatar URL
+			// immediately update image preview with new avatar URL
 			if (updatedProfile.avatar) {
 				setImagePreview(
 					`http://localhost:3000${updatedProfile.avatar}`
@@ -93,10 +92,10 @@ const Profile: React.FC<{ authToken: string }> = ({ authToken }) => {
 			<div className="profile-pic-wrapper">
 				<img
 					src={
-						profilePic // Prioritize selected image preview
+						profilePic 
 							? imagePreview || undefined
 							: profile?.avatar
-							? `http://localhost:3000${profile.avatar}` // Use updated profile avatar
+							? `http://localhost:3000${profile.avatar}`
 							: defaultProfilePic
 					}
 					alt="Profile"

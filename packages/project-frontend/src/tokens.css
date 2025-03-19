@@ -5,6 +5,7 @@
 :root {
     /* colors */
     --color-body-background: #ffffff;
+    --color-login-background: #f9f9f9;
     --color-section-background: #E0E1DD;
     --color-header-primary: #778DA9; /* header */ 
     --color-header-secondary: #415A77; /* subheadings */
@@ -30,6 +31,7 @@
     /* dark mode */
     body.dark-mode{
         --color-body-background: #0D1B2A;
+        --color-login-background: #1c3249;
         --color-section-background: #25374b;
         --color-header-primary: #415A77; /* header */ 
         --color-header-secondary: #a8bcd6; /* subheadings */

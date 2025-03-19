@@ -103,7 +103,7 @@ const Friends: React.FC = () => {
 						<li key={friend.id}>
 							<strong>{friend.name}</strong>: {friend.recentHobby}
 							<button onClick={() => removeFriend(friend.id)}>
-								🗑️
+								&nbsp;&nbsp;❌
 							</button>
 						</li>
 					))
@@ -114,7 +114,7 @@ const Friends: React.FC = () => {
 			<div className="add-friend">
 				<input
 					type="text"
-					placeholder="Enter friend's name"
+					placeholder="Enter friend's username"
 					value={newFriendName}
 					onChange={(e) => setNewFriendName(e.target.value)}
 				/>
