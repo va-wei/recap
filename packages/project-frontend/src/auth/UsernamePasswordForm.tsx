@@ -1,4 +1,4 @@
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 
 interface FormResult {
 	type: "success" | "error";
@@ -14,7 +14,7 @@ const UsernamePasswordForm: React.FC<UsernamePasswordFormProps> = ({
 	onSubmit,
 	errorMessage,
 }) => {
-	const [result, submitAction, isPending] = useFormState<
+	const [result, submitAction, isPending] = useActionState<
 		FormResult | null,
 		FormData
 	>(async (_previousState, formData) => {
